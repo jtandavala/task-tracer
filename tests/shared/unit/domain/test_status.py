@@ -7,3 +7,6 @@ class TestStatus:
 
     def test_in_progress_status(self):
         assert Status.IN_PROGRESS.value == "in-progress"
+
+    def test_todo_status(self):
+        assert Status.TODO.value == "todo"
