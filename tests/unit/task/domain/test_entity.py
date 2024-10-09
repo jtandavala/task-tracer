@@ -15,3 +15,10 @@ class TestTaskUnit(unittest.TestCase):
         self.assertEqual(task.status, Status.TODO)
         self.assertTrue(isinstance(task.created_at, datetime))
         self.assertTrue(isinstance(task.updated_at, datetime))
+
+    def test_add_default_status(self):
+        task = Task(description="Test")
+
+        self.assertTrue(isinstance(task.id, UUID))
+        self.assertEqual(task.description, "Test")
+        self.assertEqual(task.status, Status.TODO)

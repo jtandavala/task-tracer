@@ -35,5 +35,5 @@ class Status(str, Enum):
     DONE = "done"
 
     @staticmethod
-    def get_default(cls):
-        return cls.TODO
+    def get_default():
+        return Status.TODO
