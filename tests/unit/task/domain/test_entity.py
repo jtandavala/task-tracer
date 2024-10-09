@@ -29,3 +29,18 @@ class TestTaskUnit(unittest.TestCase):
         with self.assertRaises(ValidationError) as e:
             Task(status=Status.DONE)
         self.assertTrue(isinstance(e.exception, ValidationError))
+
+    def test_update_task(self):
+        task = Task(description="test")
+
+        self.assertTrue(isinstance(task.id, UUID))
+        self.assertEqual(task.description, "test")
+        self.assertEqual(task.status, Status.TODO)
+        self.assertTrue(isinstance(task.created_at, datetime))
+        self.assertTrue(isinstance(task.updated_at, datetime))
+
+        task.status = Status.IN_PROGRESS
+        task.description = "task updated"
+
+        self.assertEqual(task.description, "task updated")
+        self.assertEqual(task.status, Status.IN_PROGRESS)
