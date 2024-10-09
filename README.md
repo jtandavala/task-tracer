@@ -1,5 +1,7 @@
 # Task Tracker
 
+[![codecov](https://codecov.io/gh/tandavala-py/task-tracer/graph/badge.svg?token=ea7yFx95tN)](https://codecov.io/gh/tandavala-py/task-tracer)
+
 Task tracker is a project used to track and manage your tasks. This project is part of roadmap.sh projects, the ideia bihind this, is to build a simple command line interface (CLI) to track what you need to do, what tou have done, and what you are currently working on.
 
 
