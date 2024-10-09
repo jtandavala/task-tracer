@@ -22,7 +22,6 @@ class TaskRepository(ABC):
     def update(self, task: Task) -> None:
         raise NotImplementedError
 
-    @abstractclassmethod
     def list(
         self,
         search: Optional[str] = None,
