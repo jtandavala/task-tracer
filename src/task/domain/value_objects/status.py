@@ -33,3 +33,7 @@ class Status(str, Enum):
     TODO = "todo"
     IN_PROGRESS = "in-progress"
     DONE = "done"
+
+    @staticmethod
+    def get_default(cls):
+        return cls.TODO
