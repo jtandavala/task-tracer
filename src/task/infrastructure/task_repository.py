@@ -66,8 +66,19 @@ class TaskSqliteRepository(TaskRepository):
         per_page: Optional[int] = 5,
     ) -> TaskPaginationResult:
         offset = (page - 1) * per_page
+        query = "SELECT * FROM tasks"
+
+        params = []
+
+        if filter:
+            query += " WHERE status LIKE ?"
+            params.append("%" + filter + "%")
+
+        query += " LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
+
         c = self.session.cursor()
-        c.execute("SELECT * FROM tasks LIMIT ? OFFSET ?", (per_page, offset))
+        c.execute(query, params)
         tasks = c.fetchall()
         if tasks:
             return TaskPaginationResult(
