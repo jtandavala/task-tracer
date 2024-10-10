@@ -113,3 +113,21 @@ class TestTaskAlchemyRepository:
         found = repository.get_by_id(task.id)
         assert found.id == task.id
         assert found.status == Status.IN_PROGRESS
+
+    def test_marking_task_as_done(self, connection, migrations):
+        task = Task(description="test")
+        repository = TaskSqliteRepository(connection)
+
+        repository.save(task)
+        found = repository.get_by_id(task.id)
+
+        assert isinstance(found.id, UUID) is True
+        assert found.description == task.description
+        assert found.status == Status.TODO
+
+        task.status = Status.DONE
+        repository.update(task)
+
+        found = repository.get_by_id(task.id)
+        assert found.id == task.id
+        assert found.status == Status.DONE
