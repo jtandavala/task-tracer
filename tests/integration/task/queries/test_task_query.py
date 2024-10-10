@@ -111,3 +111,12 @@ class TestTaskQuery:
         assert tasks.items[0].status == task1.status
         assert tasks.items[0].created_at == task1.created_at
         assert tasks.items[0].updated_at == task1.updated_at
+
+    def test_return_empty_list(self, connection, migrations):
+        query = TaskQuery(connection)
+        tasks = query.execute()
+
+        assert len(tasks.items) == 0
+        assert tasks.page == 1
+        assert tasks.per_page == 5
+        assert tasks.items == []
