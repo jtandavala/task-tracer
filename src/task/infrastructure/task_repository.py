@@ -43,7 +43,10 @@ class TaskSqliteRepository(TaskRepository):
         return None
 
     def delete(self, id: UUID) -> None:
-        raise NotImplementedError
+        c = self.session.cursor()
+        c.execute("DELETE FROM tasks WHERE id = ?", (str(id),))
+        self.session.commit()
+        return None
 
     def update(self, task: Task) -> None:
         c = self.session.cursor()

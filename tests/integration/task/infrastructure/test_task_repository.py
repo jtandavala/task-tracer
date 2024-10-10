@@ -56,3 +56,23 @@ class TestTaskAlchemyRepository:
         assert updated.description == description_updated
         assert updated.created_at == task.created_at
         assert updated.updated_at != task.updated_at
+
+    def test_delete_task(self, connection, migrations):
+        task = Task(description="test")
+        repository = TaskSqliteRepository(connection)
+        repository.save(task)
+
+        found = repository.get_by_id(task.id)
+
+        assert isinstance(found.id, UUID) is True
+        assert found.id == task.id
+        assert found.description == task.description
+        assert found.status == task.status
+        assert found.created_at == task.created_at
+        assert found.updated_at == task.updated_at
+
+        repository.delete(task.id)
+
+        found = repository.get_by_id(task.id)
+
+        assert found is None
