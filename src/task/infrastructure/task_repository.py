@@ -46,7 +46,14 @@ class TaskSqliteRepository(TaskRepository):
         raise NotImplementedError
 
     def update(self, task: Task) -> None:
-        raise NotImplementedError
+        c = self.session.cursor()
+        c.execute(
+            "UPDATE tasks set description=?, status=?, \
+            updated_at= CURRENT_TIMESTAMP WHERE id = ?",
+            (task.description, task.status, str(task.id)),
+        )
+        self.session.commit()
+        return None
 
     def list(
         self,
