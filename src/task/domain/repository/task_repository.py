@@ -25,7 +25,7 @@ class TaskRepository(ABC):
     @abstractclassmethod
     def list(
         self,
-        search: Optional[str] = None,
+        filter: Optional[str] = None,
         page: Optional[int] = None,
         per_page: Optional[int] = None,
     ) -> List[Task]:

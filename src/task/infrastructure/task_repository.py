@@ -1,9 +1,10 @@
 from sqlite3 import Connection
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
 
 from src.task.domain.entity import Task
 from src.task.domain.repository.task_repository import TaskRepository
+from src.task.domain.value_objects.dto import TaskPaginationResult
 
 
 class TaskSqliteRepository(TaskRepository):
@@ -60,8 +61,24 @@ class TaskSqliteRepository(TaskRepository):
 
     def list(
         self,
-        search: Optional[str] = None,
-        page: Optional[int] = None,
-        per_page: Optional[int] = None,
-    ) -> List[Task]:
-        raise NotImplementedError
+        filter: Optional[str] = None,
+        page: Optional[int] = 1,
+        per_page: Optional[int] = 5,
+    ) -> TaskPaginationResult:
+        offset = (page - 1) * per_page
+        c = self.session.cursor()
+        c.execute("SELECT * FROM tasks LIMIT ? OFFSET ?", (per_page, offset))
+        tasks = c.fetchall()
+        if tasks:
+            return TaskPaginationResult(
+                page=int(page),
+                per_page=int(per_page),
+                items=[self.mapper(row) for row in tasks],
+            )
+
+        return TaskPaginationResult(
+            page=int(page), per_page=int(per_page), items=[]
+        )
+
+    def mapper(self, row):
+        return Task(**dict(row))
