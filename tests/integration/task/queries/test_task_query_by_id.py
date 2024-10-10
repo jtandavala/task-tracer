@@ -28,3 +28,9 @@ class TestTaskQueryById:
             query = TaskQueryById(connection)
             query.execute(UUID("5c0a22c4-530b-467e-b896-69d21bdd3cf0"))
         assert str(e.value) == "Task not found"
+
+    def test_throw_exception_with_invalid_uuid(self, connection, migrations):
+        with pytest.raises(Exception) as e:
+            query = TaskQueryById(connection)
+            query.execute("fake id")
+        assert str(e.value) == "id must be a valid UUID"
