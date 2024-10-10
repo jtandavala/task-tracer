@@ -1,16 +1,19 @@
 import pytest
 
 from src.shared.infrastructure.service.database import DatabaseConnection
+from src.shared.util.func import setup_database
+from src.task.infrastructure.task_sql_queries import create_tasks_table
 
 
-@pytest.fixture(scope="session")
-def db_connection():
-    db_conn = DatabaseConnection()
-    db_conn.setup("sqlite:///:memory:")
-    yield db_conn
-    db_conn.teardown()
+@pytest.fixture(scope="function")
+def connection():
+    db_conn = DatabaseConnection(":memory:")
+    with db_conn.get_connection() as conn:
+        yield conn
+        conn.close()
 
 
-@pytest.fixture
-def db_session(db_connection):
-    return db_connection.create_session()
+@pytest.fixture(scope="function")
+def migrations(connection):
+    tables = create_tasks_table
+    setup_database(connection, tables)
