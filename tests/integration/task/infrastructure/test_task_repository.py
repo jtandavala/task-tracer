@@ -2,6 +2,7 @@ from sqlite3 import Connection
 from uuid import UUID
 
 from src.task.domain.entity import Task
+from src.task.domain.value_objects.status import Status
 from src.task.infrastructure.task_repository import TaskSqliteRepository
 
 
@@ -84,10 +85,31 @@ class TestTaskAlchemyRepository:
         repository.save(task1)
         repository.save(task2)
 
-        tasks = repository.list()
+        tasks = repository.list(page=1, per_page=2)
 
         assert len(tasks.items) == 2
         assert tasks.page == 1
-        assert tasks.per_page == 5
+        assert tasks.per_page == 2
         assert isinstance(tasks.items[0].id, UUID) is True
         assert tasks.items[0].description == task1.description
+        assert tasks.items[0].status == task1.status
+        assert tasks.items[0].created_at == task1.created_at
+        assert tasks.items[0].updated_at == task1.updated_at
+
+    def test_marking_task_as_in_progress(self, connection, migrations):
+        task = Task(description="test")
+        repository = TaskSqliteRepository(connection)
+
+        repository.save(task)
+        found = repository.get_by_id(task.id)
+
+        assert isinstance(found.id, UUID) is True
+        assert found.description == task.description
+        assert found.status == Status.TODO
+
+        task.status = Status.IN_PROGRESS
+        repository.update(task)
+
+        found = repository.get_by_id(task.id)
+        assert found.id == task.id
+        assert found.status == Status.IN_PROGRESS
