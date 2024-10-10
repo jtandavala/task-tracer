@@ -1,9 +1,10 @@
 from sqlite3 import Connection
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
 
 from src.task.domain.entity import Task
 from src.task.domain.repository.task_repository import TaskRepository
+from src.task.domain.value_objects.dto import TaskPaginationResult
 
 
 class TaskSqliteRepository(TaskRepository):
@@ -43,15 +44,52 @@ class TaskSqliteRepository(TaskRepository):
         return None
 
     def delete(self, id: UUID) -> None:
-        raise NotImplementedError
+        c = self.session.cursor()
+        c.execute("DELETE FROM tasks WHERE id = ?", (str(id),))
+        self.session.commit()
+        return None
 
     def update(self, task: Task) -> None:
-        raise NotImplementedError
+        c = self.session.cursor()
+        c.execute(
+            "UPDATE tasks set description=?, status=?, \
+            updated_at= CURRENT_TIMESTAMP WHERE id = ?",
+            (task.description, task.status, str(task.id)),
+        )
+        self.session.commit()
+        return None
 
     def list(
         self,
-        search: Optional[str] = None,
-        page: Optional[int] = None,
-        per_page: Optional[int] = None,
-    ) -> List[Task]:
-        raise NotImplementedError
+        filter: Optional[str] = None,
+        page: Optional[int] = 1,
+        per_page: Optional[int] = 5,
+    ) -> TaskPaginationResult:
+        offset = (page - 1) * per_page
+        query = "SELECT * FROM tasks"
+
+        params = []
+
+        if filter:
+            query += " WHERE status LIKE ?"
+            params.append("%" + filter + "%")
+
+        query += " LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
+
+        c = self.session.cursor()
+        c.execute(query, params)
+        tasks = c.fetchall()
+        if tasks:
+            return TaskPaginationResult(
+                page=int(page),
+                per_page=int(per_page),
+                items=[self.mapper(row) for row in tasks],
+            )
+
+        return TaskPaginationResult(
+            page=int(page), per_page=int(per_page), items=[]
+        )
+
+    def mapper(self, row):
+        return Task(**dict(row))
