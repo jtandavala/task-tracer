@@ -24,10 +24,22 @@ class TaskSqliteRepository(TaskRepository):
             ),
         )
         self.session.commit()
-        self.session.close()
+
         return c.lastrowid
 
     def get_by_id(self, id: UUID) -> Task:
+        c = self.session.cursor()
+
+        c.execute("SELECT * FROM tasks WHERE id = ?", (str(id),))
+        row = c.fetchone()
+        if row is not None:
+            return Task(
+                id=row[0],
+                description=row[1],
+                status=row[2],
+                created_at=row[3],
+                updated_at=row[4],
+            )
         return None
 
     def delete(self, id: UUID) -> None:
