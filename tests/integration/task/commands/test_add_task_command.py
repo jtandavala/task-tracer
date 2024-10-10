@@ -21,4 +21,12 @@ class TestAddTaskCommand:
         with pytest.raises(ValidationError) as e:
             command = AddTaskCommand(TaskReceiver(connection), task_dto)
             command.execute()
-        assert isinstance(e.value, ValidationError)
+
+        validation_error = e.value
+        assert isinstance(validation_error, ValidationError)
+
+        errors = validation_error.errors()
+        assert len(errors) > 0
+        assert errors[0]["loc"] == ("description",)
+        assert errors[0]["msg"] == "Input should be a valid string"
+        assert errors[0]["type"] == "string_type"
