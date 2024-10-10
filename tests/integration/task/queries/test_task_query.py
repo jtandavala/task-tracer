@@ -26,3 +26,24 @@ class TestTaskQuery:
         assert tasks.items[0].status == task1.status
         assert tasks.items[0].created_at == task1.created_at
         assert tasks.items[0].updated_at == task1.updated_at
+
+    def test_list_tasks_with_default_parameters(self, connection, migrations):
+        task1 = Task(description="task 1")
+        task2 = Task(description="task 2")
+
+        repository = TaskSqliteRepository(connection)
+        repository.save(task1)
+        repository.save(task2)
+
+        query = TaskQuery(connection)
+
+        tasks = query.execute()
+        assert len(tasks.items) == 2
+        assert tasks.page == 1
+        assert tasks.per_page == 5
+        assert isinstance(tasks.items[0].id, UUID) is True
+        assert tasks.items[0].id == task1.id
+        assert tasks.items[0].description == task1.description
+        assert tasks.items[0].status == task1.status
+        assert tasks.items[0].created_at == task1.created_at
+        assert tasks.items[0].updated_at == task1.updated_at
