@@ -28,3 +28,22 @@ class TestTaskReceiver:
         assert errors[0]["loc"] == ("id",)
         assert "Input should be a valid UUID" in errors[0]["msg"]
         assert errors[0]["type"] == "uuid_parsing"
+
+    def test_throw_exception_when_invalid_description(
+        self, connection, migrations
+    ):
+        task_dto = {"description": None}
+
+        with pytest.raises(ValidationError) as e:
+            receiver = TaskReceiver(connection)
+            receiver.add_task(task_dto)
+
+        validation_error = e.value
+        assert isinstance(validation_error, ValidationError)
+
+        errors = validation_error.errors()
+
+        assert len(errors) > 0
+        assert errors[0]["loc"] == ("description",)
+        assert "Input should be a valid string" in errors[0]["msg"]
+        assert errors[0]["type"] == "string_type"
