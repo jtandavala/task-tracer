@@ -198,3 +198,40 @@ class TestTaskInvoker:
         assert found.status == Status.IN_PROGRESS
         assert found.created_at == task.created_at
         assert found.updated_at != task.updated_at
+
+    def test_return_not_found_message(self, connection, migrations):
+        task_dto = {
+            "id": "73dacab6-aa07-4f39-9161-f8a1e9d0c49c",
+            "description": "test",
+        }
+        invoker = TaskInvoker()
+
+        with pytest.raises(Exception) as e:
+            update_command = UpdateTaskCommand(
+                TaskReceiver(connection), task_dto
+            )
+            invoker.execute_command(update_command)
+
+        assert str(e.value) == "Task not found"
+
+    def test_throw_exception_when_update_with_invalid_id(
+        self, connection, migrations
+    ):
+        task_dto = {"id": "fake id", "description": "test"}
+        invoker = TaskInvoker()
+
+        with pytest.raises(ValidationError) as e:
+            update_command = UpdateTaskCommand(
+                TaskReceiver(connection), task_dto
+            )
+            invoker.execute_command(update_command)
+
+        validation_error = e.value
+        assert isinstance(validation_error, ValidationError)
+
+        errors = validation_error.errors()
+
+        assert len(errors) > 0
+        assert errors[0]["loc"] == ("id",)
+        assert "Input should be a valid UUID" in errors[0]["msg"]
+        assert errors[0]["type"] == "uuid_parsing"
