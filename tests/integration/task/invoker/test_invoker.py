@@ -1,6 +1,9 @@
 from datetime import datetime
 from uuid import UUID
 
+import pytest
+from pydantic import ValidationError
+
 from src.task.commands.concrete.add_task_command import AddTaskCommand
 from src.task.domain.entity import Task
 from src.task.domain.value_objects.status import Status
@@ -16,6 +19,25 @@ class TestTaskInvoker:
         invoker = TaskInvoker()
         task = invoker.execute_command(add_task_command)
         assert task == 1
+
+    def test_throw_exception_when_creating_with_invalid_description(
+        self, connection, migrations
+    ):
+        task_dto = {"description": None}
+        invoker = TaskInvoker()
+        with pytest.raises(ValidationError) as e:
+            add_task_command = AddTaskCommand(
+                TaskReceiver(connection), task_dto
+            )
+            invoker.execute_command(add_task_command)
+
+        validation_error = e.value
+        errors = validation_error.errors()
+
+        assert len(errors) > 0
+        assert errors[0]["loc"] == ("description",)
+        assert errors[0]["msg"] == "Input should be a valid string"
+        assert errors[0]["type"] == "string_type"
 
     def test_list_tasks(self, connection, migrations):
         task_dto = {"description": "test"}
