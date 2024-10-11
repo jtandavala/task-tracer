@@ -95,3 +95,29 @@ class TestTaskInvoker:
         assert tasks.items[0].status == Status.TODO
         assert isinstance(tasks.items[0].created_at, datetime) is True
         assert isinstance(tasks.items[0].updated_at, datetime) is True
+
+    def test_list_tasks_with_in_progress_status(self, connection, migrations):
+        invoker = TaskInvoker()
+        task1 = Task(description="test")
+        task2 = Task(description="test", status=Status.IN_PROGRESS)
+        add_task_command1 = AddTaskCommand(
+            TaskReceiver(connection), task1.__dict__
+        )
+        add_task_command2 = AddTaskCommand(
+            TaskReceiver(connection), task2.__dict__
+        )
+
+        invoker.execute_command(add_task_command1)
+        invoker.execute_command(add_task_command2)
+
+        task_query = TaskQuery(connection, filter=Status.IN_PROGRESS)
+        tasks = invoker.execute_command(task_query)
+
+        assert len(tasks.items) == 1
+        assert tasks.page == 1
+        assert tasks.per_page == 5
+        assert isinstance(tasks.items[0].id, UUID) is True
+        assert tasks.items[0].description == task1.description
+        assert tasks.items[0].status == Status.IN_PROGRESS
+        assert isinstance(tasks.items[0].created_at, datetime) is True
+        assert isinstance(tasks.items[0].updated_at, datetime) is True
