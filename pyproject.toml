@@ -4,10 +4,7 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = [
-    "pydantic>=2.9.2",
-    "sqlalchemy>=2.0.35",
-]
+dependencies = ["pydantic>=2.9.2", "sqlalchemy>=2.0.35"]
 
 [tool.uv]
 dev-dependencies = [
@@ -16,3 +13,6 @@ dev-dependencies = [
     "pytest>=8.3.3",
     "ruff>=0.6.9",
 ]
+
+[project.scripts]
+test = "uv run pytest"

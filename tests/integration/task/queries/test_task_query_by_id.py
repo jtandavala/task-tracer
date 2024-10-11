@@ -32,5 +32,5 @@ class TestTaskQueryById:
     def test_throw_exception_with_invalid_uuid(self, connection, migrations):
         with pytest.raises(Exception) as e:
             query = TaskQueryById(connection)
-            query.execute(UUID("fake id"))
+            query.execute("fake id")  # type: ignore
         assert str(e.value) == "id must be a valid UUID"
