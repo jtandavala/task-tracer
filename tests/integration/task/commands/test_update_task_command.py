@@ -1,5 +1,8 @@
 from uuid import UUID
 
+import pytest
+from pydantic import ValidationError
+
 from src.task.commands.concrete.update_task_command import UpdateTaskCommand
 from src.task.domain.entity import Task
 from src.task.domain.value_objects.status import Status
@@ -22,10 +25,29 @@ class TestUpdateTaskCommand:
         assert found.status == Status.TODO
 
         task.status = Status.IN_PROGRESS
-        command = UpdateTaskCommand(TaskReceiver(connection), task)
+        command = UpdateTaskCommand(TaskReceiver(connection), task.__dict__)
         command.execute()
 
         found = query.execute(task.id)
 
         assert found.id == task.id
         assert found.status == Status.IN_PROGRESS
+
+    def test_throw_exception_update_task_with_invalid(
+        self, connection, migrations
+    ):
+        with pytest.raises(ValidationError) as e:
+            command = UpdateTaskCommand(
+                TaskReceiver(connection),
+                {"id": "fake id", "description": "test"},
+            )
+            command.execute()
+            validation_error = e.value
+            assert isinstance(validation_error, ValidationError)
+
+            errors = validation_error.errors()
+
+            assert len(errors) > 0
+            assert errors[0]["loc"] == ("id",)
+            assert "Input should be a valid UUID" in errors[0]["msg"]
+            assert errors[0]["type"] == "uuid_parsing"

@@ -71,7 +71,7 @@ class TestTaskReceiver:
         task_receiver = TaskReceiver(connection)
         task.status = Status.IN_PROGRESS.value
 
-        task_receiver.update_task(task)
+        task_receiver.update_task(task.__dict__)
         found = repository.get_by_id(task.id)
 
         assert found.id == task.id
@@ -81,19 +81,21 @@ class TestTaskReceiver:
         self, connection, migrations
     ):
         with pytest.raises(Exception) as e:
-            task = Task(id="fake id", description="test")
+            task_dto = {"id": "fake id", "description": "test"}
             task_receiver = TaskReceiver(connection)
-            task_receiver.update_task(task)
+            task_receiver.update_task(task_dto)
 
         assert "Input should be a valid UUID" in str(e.value)
 
     def test_return_not_found_message(self, connection, migrations):
         with pytest.raises(Exception) as e:
-            task = Task(
-                id="a5388723-5698-43af-9d32-88c1d43af4ba", description="test"
-            )
+            task_dto = {
+                "id": "a5388723-5698-43af-9d32-88c1d43af4ba",
+                "description": "test",
+            }
+
             task_receiver = TaskReceiver(connection)
-            task_receiver.update_task(task)
+            task_receiver.update_task(task_dto)
 
         assert str(e.value) == "Task not found"
 
