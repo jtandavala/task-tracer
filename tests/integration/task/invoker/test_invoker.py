@@ -33,3 +33,12 @@ class TestTaskInvoker:
         assert tasks.items[0].status == Status.TODO
         assert isinstance(tasks.items[0].created_at, datetime) is True
         assert isinstance(tasks.items[0].updated_at, datetime) is True
+
+    def test_returning_empty_list(self, connection, migrations):
+        invoker = TaskInvoker()
+        task_query = TaskQuery(connection)
+
+        tasks = invoker.execute_command(task_query)
+
+        assert len(tasks.items) == 0
+        assert tasks.items == []
