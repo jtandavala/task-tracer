@@ -5,6 +5,7 @@ import pytest
 from pydantic import ValidationError
 
 from src.task.commands.concrete.add_task_command import AddTaskCommand
+from src.task.commands.concrete.delete_task_command import DeleteTaskCommand
 from src.task.commands.concrete.update_task_command import UpdateTaskCommand
 from src.task.domain.entity import Task
 from src.task.domain.value_objects.status import Status
@@ -235,3 +236,27 @@ class TestTaskInvoker:
         assert errors[0]["loc"] == ("id",)
         assert "Input should be a valid UUID" in errors[0]["msg"]
         assert errors[0]["type"] == "uuid_parsing"
+
+    def test_delete_a_give_task(self, connection, migrations):
+        task = Task(description="test")
+        invoker = TaskInvoker()
+
+        add_task_command = AddTaskCommand(
+            TaskReceiver(connection), task.__dict__
+        )
+        invoker.execute_command(add_task_command)
+
+        task_query = TaskQueryById(connection, task.id)
+        found = invoker.execute_command(task_query)
+
+        assert isinstance(found.id, UUID) is True
+        assert found.id == task.id
+        assert found.status == task.status
+
+        delete_command = DeleteTaskCommand(TaskReceiver(connection), task.id)
+        invoker.execute_command(delete_command)
+
+        with pytest.raises(Exception) as e:
+            invoker.execute_command(task_query)
+
+        assert str(e.value) == "Task not found"
