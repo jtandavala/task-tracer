@@ -1,4 +1,4 @@
-from src.shared.commands import Command
+from src.shared.commands.base import Command
 
 
 class TaskInvoker:
