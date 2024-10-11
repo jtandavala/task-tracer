@@ -16,15 +16,15 @@ class TestDeleteTaskCommand:
         command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
         command.execute()
 
-        query = TaskQueryById(connection)
-        found = query.execute(task.id)
+        query = TaskQueryById(connection, task.id)
+        found = query.execute()
 
         assert isinstance(found.id, UUID) is True
         assert found.id == task.id
 
-        delete_command = DeleteTaskCommand(TaskReceiver(connection))
-        delete_command.execute(task.id)
+        delete_command = DeleteTaskCommand(TaskReceiver(connection), task.id)
+        delete_command.execute()
 
         with pytest.raises(Exception) as e:
-            found = query.execute(task.id)
+            found = query.execute()
         assert str(e.value) == "Task not found"
