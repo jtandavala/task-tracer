@@ -18,8 +18,8 @@ class TestUpdateTaskCommand:
         command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
         command.execute()
 
-        query = TaskQueryById(connection)
-        found = query.execute(task.id)
+        query = TaskQueryById(connection, task.id)
+        found = query.execute()
 
         assert isinstance(found.id, UUID) is True
         assert found.id == task.id
@@ -29,7 +29,7 @@ class TestUpdateTaskCommand:
         command = UpdateTaskCommand(TaskReceiver(connection), task.__dict__)
         command.execute()
 
-        found = query.execute(task.id)
+        found = query.execute()
 
         assert found.id == task.id
         assert found.status == Status.IN_PROGRESS

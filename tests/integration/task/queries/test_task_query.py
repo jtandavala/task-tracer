@@ -15,9 +15,9 @@ class TestTaskQuery:
         repository.save(task1)
         repository.save(task2)
 
-        query = TaskQuery(connection)
+        query = TaskQuery(connection, page=1, per_page=1)
 
-        tasks = query.execute(page=1, per_page=1)
+        tasks = query.execute()
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 1
@@ -57,9 +57,9 @@ class TestTaskQuery:
         repository.save(task1)
         repository.save(task2)
 
-        query = TaskQuery(connection)
+        query = TaskQuery(connection, filter=Status.DONE.value)
 
-        tasks = query.execute(filter=Status.DONE.value)
+        tasks = query.execute()
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
@@ -78,9 +78,9 @@ class TestTaskQuery:
         repository.save(task1)
         repository.save(task2)
 
-        query = TaskQuery(connection)
+        query = TaskQuery(connection, filter=Status.TODO.value)
 
-        tasks = query.execute(filter=Status.TODO.value)
+        tasks = query.execute()
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
@@ -99,9 +99,9 @@ class TestTaskQuery:
         repository.save(task1)
         repository.save(task2)
 
-        query = TaskQuery(connection)
+        query = TaskQuery(connection, filter=Status.IN_PROGRESS.value)
 
-        tasks = query.execute(filter=Status.IN_PROGRESS.value)
+        tasks = query.execute()
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5

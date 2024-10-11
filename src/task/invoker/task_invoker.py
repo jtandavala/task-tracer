@@ -1,4 +1,4 @@
-from src.shared.commands import Command
+from src.shared.commands.base import Command
 
 
 class TaskInvoker:
@@ -6,7 +6,7 @@ class TaskInvoker:
         self._history = []
 
     def execute_command(self, command: Command):
-        command.execute()
+        return command.execute()
         # self._history.append(command)
 
     def undo_last_command(self):
