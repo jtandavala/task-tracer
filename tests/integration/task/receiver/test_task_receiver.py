@@ -86,3 +86,13 @@ class TestTaskReceiver:
             task_receiver.update_task(task)
 
         assert "Input should be a valid UUID" in str(e.value)
+
+    def test_return_not_found_message(self, connection, migrations):
+        with pytest.raises(Exception) as e:
+            task = Task(
+                id="a5388723-5698-43af-9d32-88c1d43af4ba", description="test"
+            )
+            task_receiver = TaskReceiver(connection)
+            task_receiver.update_task(task)
+
+        assert str(e.value) == "Task not found"
