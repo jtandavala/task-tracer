@@ -96,3 +96,23 @@ class TestTaskReceiver:
             task_receiver.update_task(task)
 
         assert str(e.value) == "Task not found"
+
+    def test_delete_task(self, connection, migrations):
+        task = Task(description="test")
+        repository = TaskSqliteRepository(connection)
+        task_reciver = TaskReceiver(connection)
+
+        repository.save(task)
+        found = repository.get_by_id(task.id)
+
+        assert isinstance(found.id, UUID) is True
+        assert found.id == task.id
+        assert found.description == task.description
+
+        task_reciver.delete_task(found.id)
+        found = repository.get_by_id(task.id)
+
+        with pytest.raises(Exception) as e:
+            task_reciver.delete_task(task.id)
+        assert str(e.value) == "Task not found"
+        assert found is None

@@ -1,4 +1,5 @@
 from sqlite3 import Connection
+from uuid import UUID
 
 from pydantic import ValidationError
 
@@ -23,3 +24,9 @@ class TaskReceiver:
         if task is None:
             raise Exception("Task not found")
         return self.repository.update(task_data)
+
+    def delete_task(self, id: UUID):
+        task = self.repository.get_by_id(id)
+        if task is None:
+            raise Exception("Task not found")
+        return self.repository.delete(id)
