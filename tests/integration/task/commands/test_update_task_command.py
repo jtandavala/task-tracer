@@ -3,10 +3,10 @@ from uuid import UUID
 import pytest
 from pydantic import ValidationError
 
+from src.task.commands.concrete.add_task_command import AddTaskCommand
 from src.task.commands.concrete.update_task_command import UpdateTaskCommand
 from src.task.domain.entity import Task
 from src.task.domain.value_objects.status import Status
-from src.task.infrastructure.task_repository import TaskSqliteRepository
 from src.task.queries.task_query_by_id import TaskQueryById
 from src.task.receiver.task_receiver import TaskReceiver
 
@@ -14,8 +14,9 @@ from src.task.receiver.task_receiver import TaskReceiver
 class TestUpdateTaskCommand:
     def test_update_task(self, connection, migrations):
         task = Task(description="test")
-        repository = TaskSqliteRepository(connection)
-        repository.save(task)
+
+        command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
+        command.execute()
 
         query = TaskQueryById(connection)
         found = query.execute(task.id)
@@ -51,3 +52,16 @@ class TestUpdateTaskCommand:
             assert errors[0]["loc"] == ("id",)
             assert "Input should be a valid UUID" in errors[0]["msg"]
             assert errors[0]["type"] == "uuid_parsing"
+
+    def test_return_not_found_message(self, connection, migrations):
+        with pytest.raises(Exception) as e:
+            command = UpdateTaskCommand(
+                TaskReceiver(connection),
+                {
+                    "id": "a5388723-5698-43af-9d32-88c1d43af4ba",
+                    "description": "test",
+                },
+            )
+            command.execute()
+
+        assert str(e.value) == "Task not found"
