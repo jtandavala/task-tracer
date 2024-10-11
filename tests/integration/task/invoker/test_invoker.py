@@ -5,10 +5,12 @@ import pytest
 from pydantic import ValidationError
 
 from src.task.commands.concrete.add_task_command import AddTaskCommand
+from src.task.commands.concrete.update_task_command import UpdateTaskCommand
 from src.task.domain.entity import Task
 from src.task.domain.value_objects.status import Status
 from src.task.invoker.task_invoker import TaskInvoker
 from src.task.queries.task_query import TaskQuery
+from src.task.queries.task_query_by_id import TaskQueryById
 from src.task.receiver.task_receiver import TaskReceiver
 
 
@@ -165,3 +167,34 @@ class TestTaskInvoker:
         assert tasks.items[0].status == Status.IN_PROGRESS
         assert isinstance(tasks.items[0].created_at, datetime) is True
         assert isinstance(tasks.items[0].updated_at, datetime) is True
+
+    def test_update_a_given_task(self, connection, migrations):
+        task = Task(description="test")
+        invoker = TaskInvoker()
+        add_task_command = AddTaskCommand(
+            TaskReceiver(connection), task.__dict__
+        )
+        invoker.execute_command(add_task_command)
+
+        task_query = TaskQueryById(connection, task.id)
+        found = invoker.execute_command(task_query)
+
+        assert isinstance(found.id, UUID) is True
+        assert found.id == task.id
+        assert found.description == task.description
+        assert found.status == Status.TODO
+        assert found.created_at == task.created_at
+        assert found.updated_at == task.updated_at
+
+        task.status = Status.IN_PROGRESS
+        update_command = UpdateTaskCommand(
+            TaskReceiver(connection), task.__dict__
+        )
+        invoker.execute_command(update_command)
+
+        found = invoker.execute_command(task_query)
+
+        assert found.id == task.id
+        assert found.status == Status.IN_PROGRESS
+        assert found.created_at == task.created_at
+        assert found.updated_at != task.updated_at
