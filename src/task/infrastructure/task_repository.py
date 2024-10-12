@@ -1,6 +1,5 @@
 from sqlite3 import Connection
 from typing import Optional
-from uuid import UUID
 
 from src.task.domain.entity import Task
 from src.task.domain.repository.task_repository import TaskRepository
@@ -17,7 +16,7 @@ class TaskSqliteRepository(TaskRepository):
             "INSERT INTO tasks (id, description, status, \
             created_at, updated_at) VALUES (?, ?, ?, ?, ?)",
             (
-                str(task.id),
+                task.id,
                 task.description,
                 task.status.value,
                 task.created_at,
@@ -28,7 +27,7 @@ class TaskSqliteRepository(TaskRepository):
 
         return c.lastrowid
 
-    def get_by_id(self, id: UUID) -> Task:
+    def get_by_id(self, id: int) -> Task:
         c = self.session.cursor()
 
         c.execute("SELECT * FROM tasks WHERE id = ?", (str(id),))
@@ -43,9 +42,9 @@ class TaskSqliteRepository(TaskRepository):
             )
         return None
 
-    def delete(self, id: UUID) -> None:
+    def delete(self, id: int) -> None:
         c = self.session.cursor()
-        c.execute("DELETE FROM tasks WHERE id = ?", (str(id),))
+        c.execute("DELETE FROM tasks WHERE id = ?", (id,))
         self.session.commit()
         return None
 
@@ -54,7 +53,7 @@ class TaskSqliteRepository(TaskRepository):
         c.execute(
             "UPDATE tasks set description=?, status=?, \
             updated_at= CURRENT_TIMESTAMP WHERE id = ?",
-            (task.description, task.status, str(task.id)),
+            (task.description, task.status, task.id),
         )
         self.session.commit()
         return None
