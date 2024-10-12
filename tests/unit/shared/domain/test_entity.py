@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime
-from uuid import UUID, uuid4
+from typing import Optional
 
 from pydantic import Field, ValidationError, constr
 
@@ -9,7 +9,7 @@ from src.task.domain.value_objects.status import Status
 
 
 class StubEntity(Entity):
-    id: UUID = Field(default_factory=uuid4)
+    id: Optional[int] = None
     description: constr(min_length=2, max_length=255)
     status: Status
     created_at: datetime = Field(default_factory=datetime.now)
@@ -18,8 +18,8 @@ class StubEntity(Entity):
 
 class TestEntityUnit(unittest.TestCase):
     def test_create_entity(self):
-        task = StubEntity(description="test", status=Status.TODO)
-        self.assertTrue(isinstance(task.id, UUID))
+        task = StubEntity(id=1, description="test", status=Status.TODO)
+        self.assertTrue(isinstance(task.id, int))
         self.assertEqual(task.description, "test")
         self.assertEqual(task.status, Status.TODO)
         self.assertTrue(isinstance(task.created_at, datetime))
