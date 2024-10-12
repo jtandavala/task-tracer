@@ -28,8 +28,8 @@ class TestAddTaskCommand:
 
         assert len(errors) > 0
         assert errors[0]["loc"] == ("id",)
-        assert "Input should be a valid UUID" in errors[0]["msg"]
-        assert errors[0]["type"] == "uuid_parsing"
+        assert "Input should be a valid integer" in errors[0]["msg"]
+        assert errors[0]["type"] == "int_parsing"
 
     def test_throw_exception_when_invalid_description(self, connection, migrations):
         task_dto = {"description": None}
