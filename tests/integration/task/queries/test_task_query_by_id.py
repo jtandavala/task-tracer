@@ -25,9 +25,7 @@ class TestTaskQueryById:
 
     def test_return_not_found_message(self, connection, migrations):
         with pytest.raises(Exception) as e:
-            query = TaskQueryById(
-                connection, UUID("5c0a22c4-530b-467e-b896-69d21bdd3cf0")
-            )
+            query = TaskQueryById(connection, UUID("5c0a22c4-530b-467e-b896-69d21bdd3cf0"))
             query.execute()
         assert str(e.value) == "Task not found"
 

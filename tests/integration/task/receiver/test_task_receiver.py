@@ -16,9 +16,7 @@ class TestTaskReceiver:
         result = task_receiver.add_task(task_dto)
         assert result == 1
 
-    def test_throw_exception_when_creating_task_with_invalid_uuid(
-        self, connection, migrations
-    ):
+    def test_throw_exception_when_creating_task_with_invalid_uuid(self, connection, migrations):
         task_dto = {"id": "fake id", "description": "test"}
         with pytest.raises(ValidationError) as e:
             task_receiver = TaskReceiver(connection)
@@ -34,9 +32,7 @@ class TestTaskReceiver:
         assert "Input should be a valid UUID" in errors[0]["msg"]
         assert errors[0]["type"] == "uuid_parsing"
 
-    def test_throw_exception_when_invalid_description(
-        self, connection, migrations
-    ):
+    def test_throw_exception_when_invalid_description(self, connection, migrations):
         task_dto = {"description": None}
 
         with pytest.raises(ValidationError) as e:
@@ -77,9 +73,7 @@ class TestTaskReceiver:
         assert found.id == task.id
         assert found.status == Status.IN_PROGRESS
 
-    def test_throw_exception_on_update_with_invalid_uuid(
-        self, connection, migrations
-    ):
+    def test_throw_exception_on_update_with_invalid_uuid(self, connection, migrations):
         with pytest.raises(Exception) as e:
             task_dto = {"id": "fake id", "description": "test"}
             task_receiver = TaskReceiver(connection)

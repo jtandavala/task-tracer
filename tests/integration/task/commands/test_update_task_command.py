@@ -34,9 +34,7 @@ class TestUpdateTaskCommand:
         assert found.id == task.id
         assert found.status == Status.IN_PROGRESS
 
-    def test_throw_exception_update_task_with_invalid(
-        self, connection, migrations
-    ):
+    def test_throw_exception_update_task_with_invalid(self, connection, migrations):
         with pytest.raises(ValidationError) as e:
             command = UpdateTaskCommand(
                 TaskReceiver(connection),

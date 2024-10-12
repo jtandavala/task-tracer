@@ -23,15 +23,11 @@ class TestTaskInvoker:
         task = invoker.execute_command(add_task_command)
         assert task == 1
 
-    def test_throw_exception_when_creating_with_invalid_description(
-        self, connection, migrations
-    ):
+    def test_throw_exception_when_creating_with_invalid_description(self, connection, migrations):
         task_dto = {"description": None}
         invoker = TaskInvoker()
         with pytest.raises(ValidationError) as e:
-            add_task_command = AddTaskCommand(
-                TaskReceiver(connection), task_dto
-            )
+            add_task_command = AddTaskCommand(TaskReceiver(connection), task_dto)
             invoker.execute_command(add_task_command)
 
         validation_error = e.value
@@ -42,16 +38,12 @@ class TestTaskInvoker:
         assert errors[0]["msg"] == "Input should be a valid string"
         assert errors[0]["type"] == "string_type"
 
-    def test_throw_exception_when_creating_with_invalid_uuid(
-        self, connection, migrations
-    ):
+    def test_throw_exception_when_creating_with_invalid_uuid(self, connection, migrations):
         task_dto = {"id": "fake id", "description": "test"}
         invoker = TaskInvoker()
 
         with pytest.raises(ValidationError) as e:
-            add_task_command = AddTaskCommand(
-                TaskReceiver(connection), task_dto
-            )
+            add_task_command = AddTaskCommand(TaskReceiver(connection), task_dto)
             invoker.execute_command(add_task_command)
 
         validation_error = e.value
@@ -95,12 +87,8 @@ class TestTaskInvoker:
         invoker = TaskInvoker()
         task1 = Task(description="test")
         task2 = Task(description="test", status=Status.DONE)
-        add_task_command1 = AddTaskCommand(
-            TaskReceiver(connection), task1.__dict__
-        )
-        add_task_command2 = AddTaskCommand(
-            TaskReceiver(connection), task2.__dict__
-        )
+        add_task_command1 = AddTaskCommand(TaskReceiver(connection), task1.__dict__)
+        add_task_command2 = AddTaskCommand(TaskReceiver(connection), task2.__dict__)
 
         invoker.execute_command(add_task_command1)
         invoker.execute_command(add_task_command2)
@@ -121,12 +109,8 @@ class TestTaskInvoker:
         invoker = TaskInvoker()
         task1 = Task(description="test")
         task2 = Task(description="test", status=Status.DONE)
-        add_task_command1 = AddTaskCommand(
-            TaskReceiver(connection), task1.__dict__
-        )
-        add_task_command2 = AddTaskCommand(
-            TaskReceiver(connection), task2.__dict__
-        )
+        add_task_command1 = AddTaskCommand(TaskReceiver(connection), task1.__dict__)
+        add_task_command2 = AddTaskCommand(TaskReceiver(connection), task2.__dict__)
 
         invoker.execute_command(add_task_command1)
         invoker.execute_command(add_task_command2)
@@ -147,12 +131,8 @@ class TestTaskInvoker:
         invoker = TaskInvoker()
         task1 = Task(description="test")
         task2 = Task(description="test", status=Status.IN_PROGRESS)
-        add_task_command1 = AddTaskCommand(
-            TaskReceiver(connection), task1.__dict__
-        )
-        add_task_command2 = AddTaskCommand(
-            TaskReceiver(connection), task2.__dict__
-        )
+        add_task_command1 = AddTaskCommand(TaskReceiver(connection), task1.__dict__)
+        add_task_command2 = AddTaskCommand(TaskReceiver(connection), task2.__dict__)
 
         invoker.execute_command(add_task_command1)
         invoker.execute_command(add_task_command2)
@@ -172,9 +152,7 @@ class TestTaskInvoker:
     def test_update_a_given_task(self, connection, migrations):
         task = Task(description="test")
         invoker = TaskInvoker()
-        add_task_command = AddTaskCommand(
-            TaskReceiver(connection), task.__dict__
-        )
+        add_task_command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
         invoker.execute_command(add_task_command)
 
         task_query = TaskQueryById(connection, task.id)
@@ -188,9 +166,7 @@ class TestTaskInvoker:
         assert found.updated_at == task.updated_at
 
         task.status = Status.IN_PROGRESS
-        update_command = UpdateTaskCommand(
-            TaskReceiver(connection), task.__dict__
-        )
+        update_command = UpdateTaskCommand(TaskReceiver(connection), task.__dict__)
         invoker.execute_command(update_command)
 
         found = invoker.execute_command(task_query)
@@ -208,23 +184,17 @@ class TestTaskInvoker:
         invoker = TaskInvoker()
 
         with pytest.raises(Exception) as e:
-            update_command = UpdateTaskCommand(
-                TaskReceiver(connection), task_dto
-            )
+            update_command = UpdateTaskCommand(TaskReceiver(connection), task_dto)
             invoker.execute_command(update_command)
 
         assert str(e.value) == "Task not found"
 
-    def test_throw_exception_when_update_with_invalid_id(
-        self, connection, migrations
-    ):
+    def test_throw_exception_when_update_with_invalid_id(self, connection, migrations):
         task_dto = {"id": "fake id", "description": "test"}
         invoker = TaskInvoker()
 
         with pytest.raises(ValidationError) as e:
-            update_command = UpdateTaskCommand(
-                TaskReceiver(connection), task_dto
-            )
+            update_command = UpdateTaskCommand(TaskReceiver(connection), task_dto)
             invoker.execute_command(update_command)
 
         validation_error = e.value
@@ -241,9 +211,7 @@ class TestTaskInvoker:
         task = Task(description="test")
         invoker = TaskInvoker()
 
-        add_task_command = AddTaskCommand(
-            TaskReceiver(connection), task.__dict__
-        )
+        add_task_command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
         invoker.execute_command(add_task_command)
 
         task_query = TaskQueryById(connection, task.id)
