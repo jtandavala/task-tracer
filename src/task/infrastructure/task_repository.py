@@ -87,9 +87,7 @@ class TaskSqliteRepository(TaskRepository):
                 items=[self.mapper(row) for row in tasks],
             )
 
-        return TaskPaginationResult(
-            page=int(page), per_page=int(per_page), items=[]
-        )
+        return TaskPaginationResult(page=int(page), per_page=int(per_page), items=[])
 
     def mapper(self, row):
         return Task(**dict(row))

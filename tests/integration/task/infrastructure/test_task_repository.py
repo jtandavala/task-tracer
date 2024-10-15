@@ -31,9 +31,7 @@ class TestTaskAlchemyRepository:
         assert found.created_at == task.created_at
         assert found.updated_at == task.updated_at
 
-    def test_return_none_when_passing_invalid_uuid(
-        self, connection, migrations
-    ):
+    def test_return_none_when_passing_invalid_uuid(self, connection, migrations):
         task = Task(description="test")
         repository = TaskSqliteRepository(connection)
         repository.save(task)

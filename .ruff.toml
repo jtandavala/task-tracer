@@ -1,5 +1,5 @@
-line-length = 79
+line-length = 1000
 fix = true
 
 [lint]
-extend-select = ["E501", "I001","I002"]
+extend-select = ["E501", "I001", "I002"]
