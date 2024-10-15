@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 from pydantic import ValidationError
 
@@ -16,12 +14,12 @@ class TestUpdateTaskCommand:
         task = Task(description="test")
 
         command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
-        command.execute()
+        task.id = command.execute()
 
         query = TaskQueryById(connection, task.id)
         found = query.execute()
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.status == Status.TODO
 

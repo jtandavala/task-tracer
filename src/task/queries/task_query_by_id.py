@@ -9,7 +9,7 @@ class TaskQueryById(Command):
 
     def execute(self):
         if not isinstance(self.id, int) or self.id is None:
-            raise Exception("id must be a valid UUID")
+            raise Exception("id must be a valid integer")
         task = self.repository.get_by_id(self.id)
         if task is None:
             raise Exception("Task not found")

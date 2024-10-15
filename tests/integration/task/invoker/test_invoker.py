@@ -1,5 +1,4 @@
 from datetime import datetime
-from uuid import UUID
 
 import pytest
 from pydantic import ValidationError
@@ -53,8 +52,8 @@ class TestTaskInvoker:
 
         assert len(errors) > 0
         assert errors[0]["loc"] == ("id",)
-        assert "Input should be a valid UUID" in errors[0]["msg"]
-        assert errors[0]["type"] == "uuid_parsing"
+        assert "Input should be a valid integer" in errors[0]["msg"]
+        assert errors[0]["type"] == "int_parsing"
 
     def test_list_tasks(self, connection, migrations):
         task_dto = {"description": "test"}
@@ -68,7 +67,7 @@ class TestTaskInvoker:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].description == task_dto["description"]
         assert tasks.items[0].status == Status.TODO
         assert isinstance(tasks.items[0].created_at, datetime) is True
@@ -90,8 +89,8 @@ class TestTaskInvoker:
         add_task_command1 = AddTaskCommand(TaskReceiver(connection), task1.__dict__)
         add_task_command2 = AddTaskCommand(TaskReceiver(connection), task2.__dict__)
 
-        invoker.execute_command(add_task_command1)
-        invoker.execute_command(add_task_command2)
+        task1.id = invoker.execute_command(add_task_command1)
+        task2.id = invoker.execute_command(add_task_command2)
 
         task_query = TaskQuery(connection, filter=Status.DONE)
         tasks = invoker.execute_command(task_query)
@@ -99,7 +98,7 @@ class TestTaskInvoker:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].description == task2.description
         assert tasks.items[0].status == Status.DONE
         assert isinstance(tasks.items[0].created_at, datetime) is True
@@ -112,8 +111,8 @@ class TestTaskInvoker:
         add_task_command1 = AddTaskCommand(TaskReceiver(connection), task1.__dict__)
         add_task_command2 = AddTaskCommand(TaskReceiver(connection), task2.__dict__)
 
-        invoker.execute_command(add_task_command1)
-        invoker.execute_command(add_task_command2)
+        task1.id = invoker.execute_command(add_task_command1)
+        task2.id = invoker.execute_command(add_task_command2)
 
         task_query = TaskQuery(connection, filter=Status.TODO)
         tasks = invoker.execute_command(task_query)
@@ -121,7 +120,7 @@ class TestTaskInvoker:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == Status.TODO
         assert isinstance(tasks.items[0].created_at, datetime) is True
@@ -134,8 +133,8 @@ class TestTaskInvoker:
         add_task_command1 = AddTaskCommand(TaskReceiver(connection), task1.__dict__)
         add_task_command2 = AddTaskCommand(TaskReceiver(connection), task2.__dict__)
 
-        invoker.execute_command(add_task_command1)
-        invoker.execute_command(add_task_command2)
+        task1.id = invoker.execute_command(add_task_command1)
+        task2.id = invoker.execute_command(add_task_command2)
 
         task_query = TaskQuery(connection, filter=Status.IN_PROGRESS)
         tasks = invoker.execute_command(task_query)
@@ -143,7 +142,7 @@ class TestTaskInvoker:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == Status.IN_PROGRESS
         assert isinstance(tasks.items[0].created_at, datetime) is True
@@ -153,12 +152,12 @@ class TestTaskInvoker:
         task = Task(description="test")
         invoker = TaskInvoker()
         add_task_command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
-        invoker.execute_command(add_task_command)
+        task.id = invoker.execute_command(add_task_command)
 
         task_query = TaskQueryById(connection, task.id)
         found = invoker.execute_command(task_query)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.description == task.description
         assert found.status == Status.TODO
@@ -178,7 +177,7 @@ class TestTaskInvoker:
 
     def test_return_not_found_message(self, connection, migrations):
         task_dto = {
-            "id": "73dacab6-aa07-4f39-9161-f8a1e9d0c49c",
+            "id": 33,
             "description": "test",
         }
         invoker = TaskInvoker()
@@ -204,20 +203,20 @@ class TestTaskInvoker:
 
         assert len(errors) > 0
         assert errors[0]["loc"] == ("id",)
-        assert "Input should be a valid UUID" in errors[0]["msg"]
-        assert errors[0]["type"] == "uuid_parsing"
+        assert "Input should be a valid integer" in errors[0]["msg"]
+        assert errors[0]["type"] == "int_parsing"
 
     def test_delete_a_give_task(self, connection, migrations):
         task = Task(description="test")
         invoker = TaskInvoker()
 
         add_task_command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
-        invoker.execute_command(add_task_command)
+        task.id = invoker.execute_command(add_task_command)
 
         task_query = TaskQueryById(connection, task.id)
         found = invoker.execute_command(task_query)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.status == task.status
 
