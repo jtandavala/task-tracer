@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 from pydantic import ValidationError
 
@@ -29,8 +27,8 @@ class TestTaskReceiver:
 
         assert len(errors) > 0
         assert errors[0]["loc"] == ("id",)
-        assert "Input should be a valid UUID" in errors[0]["msg"]
-        assert errors[0]["type"] == "uuid_parsing"
+        assert "Input should be a valid integer" in errors[0]["msg"]
+        assert errors[0]["type"] == "int_parsing"
 
     def test_throw_exception_when_invalid_description(self, connection, migrations):
         task_dto = {"description": None}
@@ -53,11 +51,11 @@ class TestTaskReceiver:
         task_dto = {"description": "test"}
         task = Task(**task_dto)
         repository = TaskSqliteRepository(connection)
-        repository.save(task)
+        task.id = repository.save(task)
 
         found = repository.get_by_id(task.id)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.description == task.description
         assert found.status == Status.TODO
@@ -79,12 +77,12 @@ class TestTaskReceiver:
             task_receiver = TaskReceiver(connection)
             task_receiver.update_task(task_dto)
 
-        assert "Input should be a valid UUID" in str(e.value)
+        assert "Input should be a valid integer" in str(e.value)
 
     def test_return_not_found_message(self, connection, migrations):
         with pytest.raises(Exception) as e:
             task_dto = {
-                "id": "a5388723-5698-43af-9d32-88c1d43af4ba",
+                "id": 5,
                 "description": "test",
             }
 
@@ -98,10 +96,10 @@ class TestTaskReceiver:
         repository = TaskSqliteRepository(connection)
         task_reciver = TaskReceiver(connection)
 
-        repository.save(task)
+        task.id = repository.save(task)
         found = repository.get_by_id(task.id)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.description == task.description
 

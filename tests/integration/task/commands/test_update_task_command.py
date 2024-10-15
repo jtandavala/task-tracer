@@ -48,15 +48,15 @@ class TestUpdateTaskCommand:
 
             assert len(errors) > 0
             assert errors[0]["loc"] == ("id",)
-            assert "Input should be a valid UUID" in errors[0]["msg"]
-            assert errors[0]["type"] == "uuid_parsing"
+            assert "Input should be a valid integer" in errors[0]["msg"]
+            assert errors[0]["type"] == "int_parsing"
 
     def test_return_not_found_message(self, connection, migrations):
         with pytest.raises(Exception) as e:
             command = UpdateTaskCommand(
                 TaskReceiver(connection),
                 {
-                    "id": "a5388723-5698-43af-9d32-88c1d43af4ba",
+                    "id": 4,
                     "description": "test",
                 },
             )
