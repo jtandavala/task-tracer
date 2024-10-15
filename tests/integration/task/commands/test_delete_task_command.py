@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 
 from src.task.commands.concrete.add_task_command import AddTaskCommand
@@ -14,12 +12,12 @@ class TestDeleteTaskCommand:
         task = Task(description="test")
 
         command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
-        command.execute()
+        task.id = command.execute()
 
         query = TaskQueryById(connection, task.id)
         found = query.execute()
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
 
         delete_command = DeleteTaskCommand(TaskReceiver(connection), task.id)

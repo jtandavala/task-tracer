@@ -1,5 +1,3 @@
-from uuid import UUID
-
 from src.task.domain.entity import Task
 from src.task.domain.value_objects.status import Status
 from src.task.infrastructure.task_repository import TaskSqliteRepository
@@ -12,8 +10,8 @@ class TestTaskQuery:
         task2 = Task(description="task 2")
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         query = TaskQuery(connection, page=1, per_page=1)
 
@@ -21,7 +19,7 @@ class TestTaskQuery:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 1
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].id == task1.id
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == task1.status
@@ -33,8 +31,8 @@ class TestTaskQuery:
         task2 = Task(description="task 2")
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         query = TaskQuery(connection)
 
@@ -42,7 +40,7 @@ class TestTaskQuery:
         assert len(tasks.items) == 2
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].id == task1.id
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == task1.status
@@ -54,8 +52,8 @@ class TestTaskQuery:
         task2 = Task(description="task 2")
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         query = TaskQuery(connection, filter=Status.DONE.value)
 
@@ -63,7 +61,7 @@ class TestTaskQuery:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].id == task1.id
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == task1.status
@@ -75,8 +73,8 @@ class TestTaskQuery:
         task2 = Task(description="task 2")
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         query = TaskQuery(connection, filter=Status.TODO.value)
 
@@ -84,7 +82,7 @@ class TestTaskQuery:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].id == task2.id
         assert tasks.items[0].description == task2.description
         assert tasks.items[0].status == task2.status
@@ -96,8 +94,8 @@ class TestTaskQuery:
         task2 = Task(description="task 2")
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         query = TaskQuery(connection, filter=Status.IN_PROGRESS.value)
 
@@ -105,7 +103,7 @@ class TestTaskQuery:
         assert len(tasks.items) == 1
         assert tasks.page == 1
         assert tasks.per_page == 5
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
         assert tasks.items[0].id == task1.id
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == task1.status

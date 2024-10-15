@@ -1,5 +1,3 @@
-from uuid import UUID
-
 import pytest
 
 from src.task.domain.entity import Task
@@ -11,12 +9,12 @@ class TestTaskQueryById:
     def test_get_task_by_id(self, connection, migrations):
         task = Task(description="test")
         repository = TaskSqliteRepository(connection)
-        repository.save(task)
+        task.id = repository.save(task)
 
         query = TaskQueryById(connection, task.id)
         found = query.execute()
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.description == task.description
         assert found.status == task.status
@@ -25,7 +23,7 @@ class TestTaskQueryById:
 
     def test_return_not_found_message(self, connection, migrations):
         with pytest.raises(Exception) as e:
-            query = TaskQueryById(connection, UUID("5c0a22c4-530b-467e-b896-69d21bdd3cf0"))
+            query = TaskQueryById(connection, 33)
             query.execute()
         assert str(e.value) == "Task not found"
 
@@ -33,4 +31,4 @@ class TestTaskQueryById:
         with pytest.raises(Exception) as e:
             query = TaskQueryById(connection, "fake id")
             query.execute()
-        assert str(e.value) == "id must be a valid UUID"
+        assert str(e.value) == "id must be a valid integer"
