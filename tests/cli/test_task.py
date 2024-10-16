@@ -26,12 +26,21 @@ class TestTaskCli:
         assert isinstance(task.created_at, datetime) is True
         assert isinstance(task.updated_at, datetime) is True
 
-    # def test_can_update_task(self, connection, migrations):
-    #     task_dto = {"description": "test"}
-    #     cli = TaskCli(connection)
-    #     task_id = cli.create_task(task_dto)
+    def test_can_update_task(self, connection, migrations):
+        task_dto = {"description": "test"}
+        cli = TaskCli(connection)
+        task_id = cli.create_task(task_dto)
 
-    #     task_dto["id"] = task_id
-    #     task_dto["description"] = "test updated"
+        task_dto["id"] = task_id
+        task_dto["description"] = "test updated"
 
-    #     cli.update_task(task_dto)
+        cli.update_task(task_dto)
+
+        task: Task = cli.find_by_id(task_id)
+
+        assert isinstance(task.id, int) is True
+        assert task.id == task_id
+        assert task.description == task_dto["description"]
+        assert task.status == Status.TODO
+        assert isinstance(task.created_at, datetime) is True
+        assert isinstance(task.updated_at, datetime) is True
