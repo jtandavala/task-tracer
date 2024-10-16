@@ -44,3 +44,19 @@ class TestTaskCli:
         assert task.status == Status.TODO
         assert isinstance(task.created_at, datetime) is True
         assert isinstance(task.updated_at, datetime) is True
+
+    def test_delete_task(self, connection, migrations):
+        task_dto = {"description": "test"}
+        cli = TaskCli(connection)
+        task_id = cli.create_task(task_dto)
+
+        task: Task = cli.find_by_id(task_id)
+
+        assert isinstance(task.id, int) is True
+        assert task.id == task_id
+        assert task.description == "test"
+
+        cli.delete_task(task_id)
+
+        task = cli.find_by_id(task_id)
+        assert str(task) == "Task not found"

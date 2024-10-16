@@ -1,4 +1,5 @@
 from src.task.commands.concrete.add_task_command import AddTaskCommand
+from src.task.commands.concrete.delete_task_command import DeleteTaskCommand
 from src.task.commands.concrete.update_task_command import UpdateTaskCommand
 from src.task.domain.value_objects.dto import TaskDto
 from src.task.invoker.task_invoker import TaskInvoker
@@ -29,5 +30,12 @@ class TaskCli:
         try:
             update_task_command = UpdateTaskCommand(TaskReceiver(self.connection), task_dto)
             return self.invoker.execute_command(update_task_command)
+        except Exception as e:
+            return e
+
+    def delete_task(self, id: int):
+        try:
+            delete_task_command = DeleteTaskCommand(TaskReceiver(self.connection), id)
+            return self.invoker.execute_command(delete_task_command)
         except Exception as e:
             return e
