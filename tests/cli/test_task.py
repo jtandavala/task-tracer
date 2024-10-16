@@ -13,6 +13,13 @@ class TestTaskCli:
 
         assert isinstance(task_id, int) is True
 
+    def test_throw_exception_on_create_with_invalid_description(self, connection, migrations):
+        task_dto = {"description": None}
+        cli = TaskCli(connection)
+        task = cli.create_task(task_dto)
+
+        assert str(task) == "invalid input"
+
     def test_find_task_by_id(self, connection, migrations):
         cli = TaskCli(connection)
         task_id = cli.create_task({"description": "test"})

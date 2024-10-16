@@ -16,8 +16,8 @@ class TaskCli:
         try:
             add_task_command = AddTaskCommand(TaskReceiver(self.connection), task_dto)
             return self.invoker.execute_command(add_task_command)
-        except Exception as e:
-            return e
+        except Exception:
+            return "invalid input"
 
     def find_by_id(self, id: int):
         try:
@@ -30,12 +30,12 @@ class TaskCli:
         try:
             update_task_command = UpdateTaskCommand(TaskReceiver(self.connection), task_dto)
             return self.invoker.execute_command(update_task_command)
-        except Exception as e:
-            return e
+        except Exception:
+            return "something went wrong"
 
     def delete_task(self, id: int):
         try:
             delete_task_command = DeleteTaskCommand(TaskReceiver(self.connection), id)
             return self.invoker.execute_command(delete_task_command)
-        except Exception as e:
-            return e
+        except Exception:
+            return "something went wrong"
