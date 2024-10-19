@@ -15,8 +15,8 @@ class TaskCli:
     def create_task(self, task_dto: TaskDto):
         try:
             add_task_command = AddTaskCommand(TaskReceiver(self.connection), task_dto)
-            result = self.invoker.execute_command(add_task_command)
-            return f"Task #{result} added"
+            return self.invoker.execute_command(add_task_command)
+
         except Exception as e:
             print(e)
             return "invalid input"
