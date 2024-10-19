@@ -1,4 +1,4 @@
-from src.task.domain.value_objects.status import Status
+from task.domain.value_objects.status import Status
 
 
 class TestStatus:

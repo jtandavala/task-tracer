@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from src.task.domain.entity import Task
+from task.domain.entity import Task
 
 
 class TaskDto:

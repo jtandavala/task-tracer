@@ -1,14 +1,12 @@
-from uuid import UUID
-
 import pytest
 from pydantic import ValidationError
 
-from src.task.commands.concrete.add_task_command import AddTaskCommand
-from src.task.commands.concrete.update_task_command import UpdateTaskCommand
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
-from src.task.queries.task_query_by_id import TaskQueryById
-from src.task.receiver.task_receiver import TaskReceiver
+from task.commands.concrete.add_task_command import AddTaskCommand
+from task.commands.concrete.update_task_command import UpdateTaskCommand
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
+from task.queries.task_query_by_id import TaskQueryById
+from task.receiver.task_receiver import TaskReceiver
 
 
 class TestUpdateTaskCommand:
@@ -16,12 +14,12 @@ class TestUpdateTaskCommand:
         task = Task(description="test")
 
         command = AddTaskCommand(TaskReceiver(connection), task.__dict__)
-        command.execute()
+        task.id = command.execute()
 
         query = TaskQueryById(connection, task.id)
         found = query.execute()
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.status == Status.TODO
 
@@ -48,15 +46,15 @@ class TestUpdateTaskCommand:
 
             assert len(errors) > 0
             assert errors[0]["loc"] == ("id",)
-            assert "Input should be a valid UUID" in errors[0]["msg"]
-            assert errors[0]["type"] == "uuid_parsing"
+            assert "Input should be a valid integer" in errors[0]["msg"]
+            assert errors[0]["type"] == "int_parsing"
 
     def test_return_not_found_message(self, connection, migrations):
         with pytest.raises(Exception) as e:
             command = UpdateTaskCommand(
                 TaskReceiver(connection),
                 {
-                    "id": "a5388723-5698-43af-9d32-88c1d43af4ba",
+                    "id": 4,
                     "description": "test",
                 },
             )

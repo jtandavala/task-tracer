@@ -1,7 +1,7 @@
 from typing import Optional
 
-from src.shared.commands.base import Command
-from src.task.infrastructure.task_repository import TaskSqliteRepository
+from shared.commands.base import Command
+from task.infrastructure.task_repository import TaskSqliteRepository
 
 
 class TaskQuery(Command):

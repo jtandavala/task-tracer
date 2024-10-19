@@ -1,9 +1,8 @@
 from sqlite3 import Connection
-from uuid import UUID
 
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
-from src.task.infrastructure.task_repository import TaskSqliteRepository
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
+from task.infrastructure.task_repository import TaskSqliteRepository
 
 
 class TestTaskAlchemyRepository:
@@ -15,7 +14,7 @@ class TestTaskAlchemyRepository:
         repository = TaskSqliteRepository(connection)
         result = repository.save(task)
 
-        assert isinstance(task.id, UUID) is True
+        assert isinstance(result, int) is True
         assert result is not None
 
     def test_find_task_by_id(self, connection, migrations):
@@ -23,9 +22,9 @@ class TestTaskAlchemyRepository:
         repository = TaskSqliteRepository(connection)
         repository.save(task)
 
-        found = repository.get_by_id(task.id)
+        found = repository.get_by_id(1)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.description == task.description
         assert found.status == task.status
         assert found.created_at == task.created_at
@@ -37,20 +36,19 @@ class TestTaskAlchemyRepository:
         repository.save(task)
 
         found = repository.get_by_id("fake id")
-
         assert found is None
 
     def test_update_task(self, connection, migrations):
         description_updated = "update description"
         task = Task(description="test")
         repository = TaskSqliteRepository(connection)
-        repository.save(task)
+        task.id = repository.save(task)
 
         task.description = description_updated
         repository.update(task)
         updated = repository.get_by_id(task.id)
 
-        assert isinstance(updated.id, UUID) is True
+        assert isinstance(updated.id, int) is True
         assert updated.id == task.id
         assert updated.description == description_updated
         assert updated.created_at == task.created_at
@@ -59,11 +57,11 @@ class TestTaskAlchemyRepository:
     def test_delete_task(self, connection, migrations):
         task = Task(description="test")
         repository = TaskSqliteRepository(connection)
-        repository.save(task)
+        task.id = repository.save(task)
 
         found = repository.get_by_id(task.id)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
         assert found.id == task.id
         assert found.description == task.description
         assert found.status == task.status
@@ -80,15 +78,15 @@ class TestTaskAlchemyRepository:
         task1 = Task(description="task 1")
         task2 = Task(description="test 2")
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
-
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
         tasks = repository.list(page=1, per_page=2)
 
         assert len(tasks.items) == 2
         assert tasks.page == 1
         assert tasks.per_page == 2
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
+        assert tasks.items[0].id == task1.id
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == task1.status
         assert tasks.items[0].created_at == task1.created_at
@@ -98,10 +96,11 @@ class TestTaskAlchemyRepository:
         task = Task(description="test")
         repository = TaskSqliteRepository(connection)
 
-        repository.save(task)
+        task.id = repository.save(task)
         found = repository.get_by_id(task.id)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
+        assert found.id == task.id
         assert found.description == task.description
         assert found.status == Status.TODO
 
@@ -116,10 +115,11 @@ class TestTaskAlchemyRepository:
         task = Task(description="test")
         repository = TaskSqliteRepository(connection)
 
-        repository.save(task)
+        task.id = repository.save(task)
         found = repository.get_by_id(task.id)
 
-        assert isinstance(found.id, UUID) is True
+        assert isinstance(found.id, int) is True
+        assert found.id == task.id
         assert found.description == task.description
         assert found.status == Status.TODO
 
@@ -135,13 +135,14 @@ class TestTaskAlchemyRepository:
         task2 = Task(description="task 2", status=Status.DONE)
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         tasks = repository.list(filter=Status.TODO.value)
 
         assert len(tasks.items) == 1
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
+        assert tasks.items[0].id == task1.id
         assert tasks.items[0].description == task1.description
         assert tasks.items[0].status == Status.TODO
         assert tasks.items[0].created_at == task1.created_at
@@ -152,13 +153,14 @@ class TestTaskAlchemyRepository:
         task2 = Task(description="task 2", status=Status.DONE)
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         tasks = repository.list(filter=Status.DONE.value)
 
         assert len(tasks.items) == 1
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
+        assert tasks.items[0].id == task2.id
         assert tasks.items[0].description == task2.description
         assert tasks.items[0].status == Status.DONE
         assert tasks.items[0].created_at == task2.created_at
@@ -169,13 +171,14 @@ class TestTaskAlchemyRepository:
         task2 = Task(description="task 2", status=Status.IN_PROGRESS)
 
         repository = TaskSqliteRepository(connection)
-        repository.save(task1)
-        repository.save(task2)
+        task1.id = repository.save(task1)
+        task2.id = repository.save(task2)
 
         tasks = repository.list(filter=Status.IN_PROGRESS.value)
 
         assert len(tasks.items) == 1
-        assert isinstance(tasks.items[0].id, UUID) is True
+        assert isinstance(tasks.items[0].id, int) is True
+        assert tasks.items[0].id == task2.id
         assert tasks.items[0].description == task2.description
         assert tasks.items[0].status == Status.IN_PROGRESS
         assert tasks.items[0].created_at == task2.created_at

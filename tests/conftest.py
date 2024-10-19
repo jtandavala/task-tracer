@@ -1,8 +1,8 @@
 import pytest
 
-from src.shared.infrastructure.service.database import DatabaseConnection
-from src.shared.util.func import setup_database
-from src.task.infrastructure.task_sql_queries import create_tasks_table
+from shared.infrastructure.service.database import DatabaseConnection
+from shared.util.func import setup_database
+from task.infrastructure.task_sql_queries import create_tasks_table
 
 
 @pytest.fixture(scope="function")
