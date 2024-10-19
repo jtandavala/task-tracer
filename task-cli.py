@@ -2,13 +2,13 @@ import os
 
 import click
 
-from shared.infrastructure.service.database import DatabaseConnection
+from src.shared.infrastructure.service.database import DatabaseConnection
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE = os.path.join(BASE_DIR, "data", "db.sqlite")
+DATABASE = os.path.join(BASE_DIR, "src/data", "db.sqlite")
 database = DatabaseConnection(DATABASE)
 
-# with database.get_connection() as conn:
+# with database.get_connection() as conn: # type: ignore
 #     cli = TaskCli(conn)
 
 
@@ -48,7 +48,8 @@ def add(description):
     see an error message.
 
     """
-
+    """ with database.get_connection() as conn:
+        pass """
     click.echo(DATABASE)
 
 
