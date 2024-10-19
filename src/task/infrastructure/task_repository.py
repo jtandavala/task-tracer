@@ -1,9 +1,9 @@
 from sqlite3 import Connection
 from typing import Optional
 
-from src.task.domain.entity import Task
-from src.task.domain.repository.task_repository import TaskRepository
-from src.task.domain.value_objects.dto import TaskPaginationResult
+from task.domain.entity import Task
+from task.domain.repository.task_repository import TaskRepository
+from task.domain.value_objects.dto import TaskPaginationResult
 
 
 class TaskSqliteRepository(TaskRepository):

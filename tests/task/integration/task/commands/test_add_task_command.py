@@ -1,8 +1,8 @@
 import pytest
 from pydantic import ValidationError
 
-from src.task.commands.concrete.add_task_command import AddTaskCommand
-from src.task.receiver.task_receiver import TaskReceiver
+from task.commands.concrete.add_task_command import AddTaskCommand
+from task.receiver.task_receiver import TaskReceiver
 
 
 class TestAddTaskCommand:

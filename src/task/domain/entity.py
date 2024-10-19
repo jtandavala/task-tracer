@@ -3,8 +3,8 @@ from typing import Optional
 
 from pydantic import Field, constr
 
-from src.shared.domain.entity import Entity
-from src.task.domain.value_objects.status import Status
+from shared.domain.entity import Entity
+from task.domain.value_objects.status import Status
 
 
 class Task(Entity):

@@ -1,7 +1,7 @@
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
-from src.task.infrastructure.task_repository import TaskSqliteRepository
-from src.task.queries.task_query import TaskQuery
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
+from task.infrastructure.task_repository import TaskSqliteRepository
+from task.queries.task_query import TaskQuery
 
 
 class TestTaskQuery:

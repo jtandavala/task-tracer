@@ -1,8 +1,8 @@
 from sqlite3 import Connection
 
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
-from src.task.infrastructure.task_repository import TaskSqliteRepository
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
+from task.infrastructure.task_repository import TaskSqliteRepository
 
 
 class TestTaskAlchemyRepository:

@@ -1,15 +1,15 @@
 import os
 
 import click
+from rich.console import Console
+from rich.table import Table
 
 from shared.infrastructure.service.database import DatabaseConnection
+from task.app import TaskCli
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "data", "db.sqlite")
 database = DatabaseConnection(DATABASE)
-
-# with database.get_connection() as conn:
-#     cli = TaskCli(conn)
 
 
 @click.group()
@@ -49,7 +49,13 @@ def add(description):
 
     """
 
-    click.echo(DATABASE)
+    with database.get_connection() as conn:
+        database.run_migrations(conn)
+        task_cli = TaskCli(conn)
+        task_dto = {"description": description}
+        result = task_cli.create_task(task_dto)
+
+    click.echo(result)
 
 
 @cli.command()
@@ -138,7 +144,19 @@ def list(page, per_page, done, todo, in_progress):
         - If multiple filters are provided, the first one encountered will be used.\n
 
     """
-    pass
+    table = Table(title="Task Tracer")
+
+    table.add_column("Id", justify="left", style="cyan", no_wrap=True)
+    table.add_column("Task", style="magenta")
+    table.add_column("Status", justify="left", style="green")
+
+    table.add_row("Dec 20, 2019", "Star Wars: The Rise of Skywalker", "$952,110,690")
+    table.add_row("May 25, 2018", "Solo: A Star Wars Story", "$393,151,347")
+    table.add_row("Dec 15, 2017", "Star Wars Ep. V111: The Last Jedi", "$1,332,539,889")
+    table.add_row("Dec 16, 2016", "Rogue One: A Star Wars Story", "$1,332,439,889")
+
+    console = Console()
+    console.print(table)
 
 
 @cli.command()

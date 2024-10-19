@@ -4,7 +4,12 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["click>=8.1.7", "pydantic>=2.9.2", "sqlalchemy>=2.0.35"]
+dependencies = [
+    "click>=8.1.7",
+    "pydantic>=2.9.2",
+    "rich>=13.9.2",
+    "sqlalchemy>=2.0.35",
+]
 
 [tool.uv]
 dev-dependencies = [

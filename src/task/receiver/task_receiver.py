@@ -3,9 +3,9 @@ from uuid import UUID
 
 from pydantic import ValidationError
 
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.dto import TaskDto
-from src.task.infrastructure.task_repository import TaskSqliteRepository
+from task.domain.entity import Task
+from task.domain.value_objects.dto import TaskDto
+from task.infrastructure.task_repository import TaskSqliteRepository
 
 
 class TaskReceiver:

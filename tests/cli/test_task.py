@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from src.cli.task import TaskCli
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
+from task.app import TaskCli
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
 
 
 class TestTaskCli:

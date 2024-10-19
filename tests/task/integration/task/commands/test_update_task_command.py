@@ -1,12 +1,12 @@
 import pytest
 from pydantic import ValidationError
 
-from src.task.commands.concrete.add_task_command import AddTaskCommand
-from src.task.commands.concrete.update_task_command import UpdateTaskCommand
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
-from src.task.queries.task_query_by_id import TaskQueryById
-from src.task.receiver.task_receiver import TaskReceiver
+from task.commands.concrete.add_task_command import AddTaskCommand
+from task.commands.concrete.update_task_command import UpdateTaskCommand
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
+from task.queries.task_query_by_id import TaskQueryById
+from task.receiver.task_receiver import TaskReceiver
 
 
 class TestUpdateTaskCommand:

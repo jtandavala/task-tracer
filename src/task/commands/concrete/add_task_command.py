@@ -1,6 +1,6 @@
-from src.shared.commands.base import Command
-from src.task.domain.value_objects.dto import TaskDto
-from src.task.receiver.task_receiver import TaskReceiver
+from shared.commands.base import Command
+from task.domain.value_objects.dto import TaskDto
+from task.receiver.task_receiver import TaskReceiver
 
 
 class AddTaskCommand(Command):

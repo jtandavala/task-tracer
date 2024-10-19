@@ -1,8 +1,8 @@
 import pytest
 
-from src.task.domain.entity import Task
-from src.task.infrastructure.task_repository import TaskSqliteRepository
-from src.task.queries.task_query_by_id import TaskQueryById
+from task.domain.entity import Task
+from task.infrastructure.task_repository import TaskSqliteRepository
+from task.queries.task_query_by_id import TaskQueryById
 
 
 class TestTaskQueryById:

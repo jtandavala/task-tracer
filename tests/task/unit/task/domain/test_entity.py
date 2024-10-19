@@ -3,8 +3,8 @@ from datetime import datetime
 
 from pydantic import ValidationError
 
-from src.task.domain.entity import Task
-from src.task.domain.value_objects.status import Status
+from task.domain.entity import Task
+from task.domain.value_objects.status import Status
 
 
 class TestTaskUnit(unittest.TestCase):
